@@ -2,3 +2,5 @@ __pycache__/
 crm_database.db
 .DS_Store
 .venv/
+
+.streamlit/

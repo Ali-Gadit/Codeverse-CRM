@@ -7,7 +7,7 @@ import re
 import uuid
 import datetime
 
-NEON_DB_URL = "postgresql://neondb_owner:npg_pJYTD3klbVa8@ep-round-violet-azb55s71-pooler.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+NEON_DB_URL = st.secrets["NEON_DB_URL"]
 
 # Create engine with connection pooling enabled
 engine = create_engine(NEON_DB_URL, pool_size=10, max_overflow=20)
