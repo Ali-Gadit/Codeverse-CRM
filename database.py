@@ -164,7 +164,7 @@ def get_table_data(table_name):
         
         ensure_callback_columns(conn, table_name)
         
-        df = pd.read_sql_query(f"SELECT * FROM {table_name}", engine)
+        df = pd.read_sql_query(f"SELECT * FROM {table_name} ORDER BY _crm_id ASC", engine)
         conn.close()
         return df
     except Exception as e:
