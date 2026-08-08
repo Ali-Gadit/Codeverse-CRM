@@ -9,8 +9,14 @@ import datetime
 
 NEON_DB_URL = st.secrets["NEON_DB_URL"]
 
-# Create engine with connection pooling enabled
-engine = create_engine(NEON_DB_URL, pool_size=10, max_overflow=20)
+# Create engine with connection pooling enabled, handling serverless DB disconnects
+engine = create_engine(
+    NEON_DB_URL, 
+    pool_size=10, 
+    max_overflow=20, 
+    pool_pre_ping=True, 
+    pool_recycle=300
+)
 
 def get_connection():
     """
