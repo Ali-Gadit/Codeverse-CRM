@@ -606,15 +606,14 @@ else:
                 custom_cols = [c for c in df_active.columns if c not in ('_crm_id', 'status', 'callback_time', 'callback_notes')]
                 if custom_cols:
                     st.markdown('<br><div class="section-title">🗑️ Delete Columns Permanently</div>', unsafe_allow_html=True)
-                    st.markdown("<p style='font-size: 0.85rem; color: #64748B; margin-bottom: 8px;'>Prune custom columns from the SQLite database table:</p>", unsafe_allow_html=True)
-                    cols_layout = st.columns(len(custom_cols) if len(custom_cols) < 8 else 8)
-                    for idx, col_name in enumerate(custom_cols):
-                        col_pos = idx % 8
-                        with cols_layout[col_pos]:
-                            if st.button(f"✕ {col_name}", key=f"drop_btn_{col_name}", use_container_width=True, help=f"Delete column '{col_name}'"):
-                                db.delete_column(active_table, col_name)
-                                st.toast(f"Dropped column '{col_name}'!")
-                                st.rerun()
+                    st.markdown("<p style='font-size: 0.85rem; color: #64748B; margin-bottom: 8px;'>Select custom columns to permanently remove from the database:</p>", unsafe_allow_html=True)
+                    with st.form("delete_cols_form"):
+                        cols_to_delete = st.multiselect("Columns to delete", custom_cols, label_visibility="collapsed")
+                        submit_delete = st.form_submit_button("🗑️ Delete Selected Columns", type="primary")
+                        if submit_delete and cols_to_delete:
+                            db.delete_columns(active_table, cols_to_delete)
+                            st.toast(f"Dropped {len(cols_to_delete)} columns!")
+                            st.rerun()
 
                 # Data Export & Download Block
                 st.markdown('<br><div class="section-title">📥 Export Pipeline Data</div>', unsafe_allow_html=True)

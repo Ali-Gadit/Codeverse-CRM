@@ -212,14 +212,16 @@ def add_column(table_name, col_name):
     conn.close()
     st.cache_data.clear()
 
-def delete_column(table_name, col_name):
-    if col_name in ('_crm_id', 'status'):
+def delete_columns(table_name, col_names):
+    valid_cols = [c for c in col_names if c not in ('_crm_id', 'status')]
+    if not valid_cols:
         return False
         
     conn = get_connection()
     try:
         cursor = conn.cursor()
-        cursor.execute(f'ALTER TABLE {table_name} DROP COLUMN "{col_name}"')
+        drop_statements = ", ".join([f'DROP COLUMN "{col}"' for col in valid_cols])
+        cursor.execute(f'ALTER TABLE {table_name} {drop_statements}')
         conn.commit()
         conn.close()
         st.cache_data.clear()
