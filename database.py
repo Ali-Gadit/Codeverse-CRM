@@ -218,15 +218,12 @@ def delete_column(table_name, col_name):
         
     conn = get_connection()
     try:
-        df = pd.read_sql_query(f"SELECT * FROM {table_name}", engine)
-        if col_name in df.columns:
-            df = df.drop(columns=[col_name])
-            df.to_sql(table_name, engine, if_exists='replace', index=False)
-            conn.close()
-            st.cache_data.clear()
-            return True
+        cursor = conn.cursor()
+        cursor.execute(f'ALTER TABLE {table_name} DROP COLUMN "{col_name}"')
+        conn.commit()
         conn.close()
-        return False
+        st.cache_data.clear()
+        return True
     except Exception as e:
         conn.close()
         raise e

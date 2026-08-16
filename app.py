@@ -509,17 +509,6 @@ else:
                     
                     st.markdown(f'<div class="lead-details-scroll-container" style="max-height: 380px; overflow-y: auto; padding: 12px; border-radius: 8px; border: 1px solid #E2E8F0; background-color: #F8FAFC; margin-bottom: 15px; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);">{details_html}</div>', unsafe_allow_html=True)
                     
-                    with st.expander("📝 Edit Data Fields"):
-                        st.caption("Press Enter or click away to save changes.")
-                        for col in selected_row.index:
-                            if col not in ('_crm_id', 'status', 'callback_time', 'callback_notes'):
-                                current_val = selected_row[col] if pd.notna(selected_row[col]) else ""
-                                new_val = st.text_input(f"{col}", value=str(current_val), key=f"edit_{col}_{crm_id}")
-                                if new_val != str(current_val):
-                                    db.update_lead_field(active_table, crm_id, col, new_val)
-                                    st.toast(f"Updated {col}!")
-                                    st.rerun()
-                    
                     st.markdown("<hr style='margin: 15px 0; border: 0; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
                     
                     # Status dropdown selectbox
@@ -611,25 +600,6 @@ else:
                             db.update_callback(active_table, crm_id, dt, cb_notes)
                             st.toast("Custom callback scheduled!")
                             st.rerun()
-
-            st.markdown('<hr style="margin: 30px 0; border: 0; border-top: 1px solid #E2E8F0;">', unsafe_allow_html=True)
-            st.markdown('<div class="section-title">➕ Add New Column</div>', unsafe_allow_html=True)
-            col_add1, col_add2 = st.columns([3, 1])
-            with col_add1:
-                new_col_name = st.text_input("New Column Name", placeholder="e.g. Secondary Phone", label_visibility="collapsed")
-            with col_add2:
-                if st.button("Add Column", use_container_width=True):
-                    if new_col_name.strip():
-                        import re
-                        safe_name = re.sub(r'[^a-zA-Z0-9_\ ]', '', new_col_name.strip())
-                        if safe_name:
-                            db.add_column(active_table, safe_name)
-                            st.toast(f"Added column: {safe_name}")
-                            st.rerun()
-                        else:
-                            st.error("Invalid column name.")
-                    else:
-                        st.error("Enter a name.")
 
             if role == 'admin':
                 # Column Removal Panel at the bottom
